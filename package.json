@@ -1,0 +1,17 @@
+{
+	"name": "@acryps/interpreter",
+	"description": "llm agnostic interface with tool calling",
+	"version": "0.0.1",
+	"type": "module",
+	"main": ".built/index.js",
+	"typings": ".built/index.d.ts",
+	"sideEffects": false,
+	"scripts": {
+		"build": "cd source && tsc && cd ..",
+		"preversion": "npm run build"
+	},
+	"license": "GPL-3.0-only",
+	"devDependencies": {
+		"typescript": "^5.3.2"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"target": "esnext",
+		"outDir": "../.built",
+		"declaration": true,
+		"lib": [
+			"esnext"
+		]
+	}
+}
