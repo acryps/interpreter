@@ -9,6 +9,11 @@ export class Interpreter {
 	static readonly toolStartToken = '<ACTION>';
 	static readonly toolEndToken = '</ACTION>';
 
+	onNoToolCallError: () => {};
+	onUnknownToolCallError: (tool: string) => {};
+	onParameterParsingError: (tool: string, error: Error, content: string) => {};
+	onToolCallError: (error: Error) => {};
+
 	constructor(
 		public model: InterpreterModel
 	) {}
@@ -52,7 +57,7 @@ export class Interpreter {
 		]);
 
 		if (!message.includes(Interpreter.toolStartToken)) {
-			console.warn(`[interpreter] no tools called.`);
+			this.onNoToolCallError();
 
 			return await this.execute(...messages);
 		}
@@ -66,7 +71,7 @@ export class Interpreter {
 			const tool = this.tools.find(tool => tool.name == toolName);
 
 			if (!tool) {
-				console.warn(`[interpreter] no tool named '${toolName}'.`);
+				this.onUnknownToolCallError(toolName);
 
 				return await this.execute(...messages);
 			}
@@ -76,7 +81,7 @@ export class Interpreter {
 			try {
 				parameters = this.parseParameters(content.split('(').slice(1).join('('), tool.parameters);
 			} catch (error) {
-				console.warn(`[interpreter] parameter parsing failed '${toolName}': ${error.message} (${content})`);
+				this.onParameterParsingError(toolName, error.message, content);
 
 				return await this.execute(...messages);
 			}
@@ -88,7 +93,7 @@ export class Interpreter {
 			try {
 				await call.tool.action(...call.values);
 			} catch (error) {
-				console.warn(`[interpreter] tool call failed: ${call.tool.name}`, error);
+				this.onToolCallError(error);
 
 				if (error instanceof ToolError) {
 					messages.push(
