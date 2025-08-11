@@ -1,7 +1,7 @@
 {
 	"name": "@acryps/interpreter",
 	"description": "llm agnostic interface with tool calling",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"type": "module",
 	"main": ".built/index.js",
 	"typings": ".built/index.d.ts",
