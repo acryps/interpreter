@@ -9,10 +9,14 @@ export class Interpreter {
 	static readonly toolStartToken = '<ACTION>';
 	static readonly toolEndToken = '</ACTION>';
 
-	onNoToolCallError: () => {};
-	onUnknownToolCallError: (tool: string) => {};
-	onParameterParsingError: (tool: string, error: Error, content: string) => {};
-	onToolCallError: (error: Error) => {};
+	// non breaking LLM errors
+	//
+	// the functions will be called whenever the LLM generates nonsense that requires the model to rerun the response
+	// overwrite to add logging or monitor issues
+	onNoToolCallError = () => {};
+	onUnknownToolCallError = (tool: string) => {};
+	onParameterParsingError = (tool: string, error: Error, content: string) => {};
+	onToolCallError = (error: Error) => {};
 
 	constructor(
 		public model: InterpreterModel
@@ -116,6 +120,9 @@ export class Interpreter {
 		return message;
 	}
 
+	// registers a new tool
+	//
+	// tools can be overwritten by defining the same name twice.
 	addTool(name: string, parameters: ToolParameter[], action: Function) {
 		const existing = this.tools.findIndex(tool => tool.name == name);
 
